@@ -21,7 +21,7 @@ object CountryCount {
     // Load each line of the source data into an RDD
     val lines = sc.textFile(SparkFiles.get("countries.csv"))
     
-    // The input to the RDD map function is another function. In this case, it is a lambda
+    // The input to the RDD map function is another function. In this case, it is a scala
     // function that splits the tab delimited dataset and only gets the second column of data.
     val regions = lines.map(x => x.split("\t")(1))
     
