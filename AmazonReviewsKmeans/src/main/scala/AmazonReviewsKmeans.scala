@@ -15,52 +15,35 @@ import org.apache.spark.ml.feature._
 
 
 /** Compute the average number of friends by age in a social network. */
-object WineKmeans {
+object AmazonReviewsKmeans {
   
 
   /** Our main function where the action happens */
   def main(args: Array[String]) {
+
+    val input = args(0)
+    val output = args(1)
    
     // Set the log level to only print errors
-    val log = Logger.getLogger("edu.ateneo.nrg.spark.WineKmeans")
+    val log = Logger.getLogger("edu.ateneo.nrg.spark.AmazonReviewsKmeans")
     log.setLevel(Level.INFO)
+
+    log.info("Output Folder set to: " + output)
         
     // Create a SparkContext using every core of the local machine
     val spark = SparkSession
         .builder
-        .appName("SparkSqlWine")
-        .master("local[*]")
+        .appName("AmazonReviewsKmeans")
         .getOrCreate()
-
-    val schema = StructType(Array(
-        StructField("id", IntegerType),
-        StructField("country", StringType),
-        StructField("description", StringType),
-        StructField("desgination", StringType),
-        StructField("points", IntegerType),
-        StructField("price", DoubleType),
-        StructField("province", StringType),
-        StructField("region_1", StringType),
-        StructField("region_2", StringType),
-        StructField("taster_twitter_handle", StringType),
-        StructField("title", StringType),
-        StructField("variety", StringType),
-        StructField("winery", StringType)
-    ))
   
-    // Load each line of the source data into an RDD
-    val wineReviews = spark.read
-        .format("csv")
-        .option("header", "true")
-        .option("multiLine", "true")
-        .option("sep", ",")
-        .option("quote", "\"")
-        .schema(schema)
-        .load(SparkFiles.get("winemag-data-130k-v2.csv.gz"))
+    // Load Parquet file
+    val amazonReviews = spark.read
+        .option("basePath", "s3://amazon-reviews-pds/parquet/")
+        .parquet(input)
     
     log.info("Filtering out bad data")
     // Filter out bad data
-    val filteredWineReviews = wineReviews.filter("id is not null and country is not null and description is not null")
+    val filtererdAmazonReviews = amazonReviews.filter("review_body is not null")
     
     // Creates a User defined function that will count the number of elements in an
     // array in a given column.
@@ -68,7 +51,7 @@ object WineKmeans {
     
     // Converts string to lowercase, then splits by regex. Denotes matching pattern, not splitting gaps.
     val regexTokenizer = new RegexTokenizer()
-        .setInputCol("description")
+        .setInputCol("review_body")
         .setOutputCol("words")
         .setPattern("\\w+").setGaps(false)
         
@@ -88,18 +71,18 @@ object WineKmeans {
     val comprehensiveTokenizer = new Pipeline()
         .setStages(Array(regexTokenizer, remover, bigram))
         
-    val comprehensiveTokenizerModel = comprehensiveTokenizer.fit(filteredWineReviews)
+    val comprehensiveTokenizerModel = comprehensiveTokenizer.fit(filtererdAmazonReviews)
 
-    val bigramDataFrame = comprehensiveTokenizerModel.transform(filteredWineReviews)
+    val bigramDataFrame = comprehensiveTokenizerModel.transform(filtererdAmazonReviews)
 
     log.info("Combining unigrams and bigrams")
 
     val finalWords = bigramDataFrame.withColumn("tokens", concat(col("filteredWords"), col("bigrams")))
 
-    finalWords.select("description", "tokens").show(22, false)
+    finalWords.select("review_body", "tokens").show(22, false)
     
     // Get the raw count of each of the terms/tokens
-    val cv = new CountVectorizer()
+    val cv = new CountVectorizer()  
         .setInputCol("tokens")
         .setOutputCol("rawFeatures") 
         .setMinDF(2.0) // minDF=2.0 means a token needs to appear at least twice for it to be considered part of the 
@@ -128,9 +111,9 @@ object WineKmeans {
     // Count the number of members per cluster.
     clustered.groupBy("prediction").count().orderBy("prediction").show()
     
-    clustered.select("tokens", "prediction", "variety", "points", "price").filter("prediction = 0").show(truncate=false)
-    clustered.select("tokens", "prediction", "variety", "points", "price").filter("prediction = 1").show(truncate=false)
-    clustered.select("tokens", "prediction", "variety", "points", "price").filter("prediction = 2").show(truncate=false)
+    clustered.select("tokens", "prediction").filter("prediction = 0").withColumn("tokens", col("tokens").cast("string")).write.format("csv").save(output + "/prediction1")
+    clustered.select("tokens", "prediction").filter("prediction = 1").withColumn("tokens", col("tokens").cast("string")).write.format("csv").save(output + "/prediction2")
+    clustered.select("tokens", "prediction").filter("prediction = 2").withColumn("tokens", col("tokens").cast("string")).write.format("csv").save(output + "/prediction3")
     
     
     spark.stop()
