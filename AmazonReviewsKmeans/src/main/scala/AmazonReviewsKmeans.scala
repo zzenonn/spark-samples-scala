@@ -109,7 +109,7 @@ object AmazonReviewsKmeans {
     val clustered = clusteringPipelineModel.transform(finalWords)
     
     // Count the number of members per cluster.
-    clustered.groupBy("prediction").count().orderBy("prediction").show()
+    clustered.groupBy("prediction").count().orderBy("prediction").write.format("csv").save(output + "/clustersummary")
     
     clustered.select("tokens", "prediction").filter("prediction = 0").withColumn("tokens", col("tokens").cast("string")).write.format("csv").save(output + "/prediction1")
     clustered.select("tokens", "prediction").filter("prediction = 1").withColumn("tokens", col("tokens").cast("string")).write.format("csv").save(output + "/prediction2")
