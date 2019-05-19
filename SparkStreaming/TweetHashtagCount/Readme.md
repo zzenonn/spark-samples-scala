@@ -1,6 +1,6 @@
 # Tweet
 
-To compile, run `sbt assembly`. To run, run `spark-submit target/scala-2.11/PrintTweets-assembly-1.0.jar <location of twitter credential file>`
+To compile, run `sbt assembly`. To run, run `spark-submit target/scala-2.11/TweetHashtagCount-assembly-1.0.jar <location of twitter credential file>`
 
 ## Twitter Credential Files
 
