@@ -124,7 +124,7 @@ object BankingClassification {
         .setRawPredictionCol("rawPrediction")
         .setLabelCol("y")
 
-    println("Accuracy before Cross Validation", binEval.evaluate(prediction))
+    println("Accuracy before Cross Validation: ", binEval.evaluate(prediction))
 
     val paramGrid = new ParamGridBuilder()
         .addGrid(lr.regParam, Array(0.01, 0.25, 0.5, 1.0, 2.0))
@@ -132,13 +132,17 @@ object BankingClassification {
         .addGrid(lr.maxIter, Array(1, 5, 10, 15, 20))
         .build()
 
-    // val trainingPipelineModel = trainingPipeline.fit(transformedData)
+    val cv = new CrossValidator()
+        .setEstimator(regressionPipeline)
+        .setEvaluator(binEval)
+        .setEstimatorParamMaps(paramGrid)
+        .setNumFolds(3)
+        .setParallelism(2)  // Evaluate up to 2 parameter settings in parallel    
 
-    // val trainedData = trainingPipelineModel.transform(transformedData)
+    val cvModel = cv.fit(trainingData)
 
-    // trainedData.select("educationVec").show()
-
-
+    val cvPredictions = cvModel.transform(testingData)
+    print("Accuracy after Cross Validation: ", binEval.evaluate(cvPredictions))
 
     spark.stop()
   }
