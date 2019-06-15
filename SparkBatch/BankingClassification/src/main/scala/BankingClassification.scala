@@ -130,6 +130,8 @@ object BankingClassification {
         .addGrid(lr.regParam, Array(0.01, 0.25, 0.5, 1.0, 2.0))
         .addGrid(lr.elasticNetParam, Array(0.0, 0.25, 0.5, 0.75, 1.0))
         .addGrid(lr.maxIter, Array(1, 5, 10, 15, 20))
+        .addGrid(lr.tol, Array(0.01, 0.25, 0.5, 1.0, 2.0))
+        .addGrid(lr.threshold, Array(0.0, 0.25, 0.5, 0.75, 1.0))
         .build()
 
     val cv = new CrossValidator()
