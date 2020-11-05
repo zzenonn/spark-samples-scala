@@ -40,7 +40,7 @@ object AveragePopulation {
     // The value then becomes another tuple. The reduce by key function takes the value of the first 
     // entry of the key(x), and the second entry of the key (y), then performs operations on it. In this case,
     // since x and y are tuples, we need to also specify the index we're looking at.
-    val totalsPerRegion = rdd.mapValues((_, 1)).reduceByKey( (x._1 + y._1, x._2 + y._2))
+    val totalsPerRegion = rdd.mapValues((_, 1)).reduceByKey( (x,y) =>  (x._1 + y._1, x._2 + y._2))
     
     // After running the function in the previous line, the entire key-value pair would look something like
     // (key : <region>, value : (<total population>, <number of countries>)). Given this, we can now calculate

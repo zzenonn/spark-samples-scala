@@ -15,7 +15,6 @@ import org.apache.spark.ml.tuning._
 
 
 
-
 /** Run the Logistic regression algorithm on banking data. */
 object BankingClassification {
   
@@ -100,7 +99,7 @@ object BankingClassification {
 
     val testingData = splits(1)
 
-    val encoder = new OneHotEncoderEstimator()
+    val encoder = new OneHotEncoder()
         .setInputCols(Array("jobIndex", "maritalIndex", "educationIndex", "pOutcomeIndex"))
         .setOutputCols(Array("jobVec", "maritalVec", "educationVec", "pOutcomeVec"))
 
