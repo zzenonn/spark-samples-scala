@@ -64,7 +64,7 @@ object WineKmeans {
     
     // Creates a User defined function that will count the number of elements in an
     // array in a given column.
-    val countTokens = udf((words: Seq[String]) => words.size, IntegerType)
+    val countTokens = udf((words: Seq[String]) => words.size)
     
     // Converts string to lowercase, then splits by regex. Denotes matching pattern, not splitting gaps.
     val regexTokenizer = new RegexTokenizer()
