@@ -1,6 +1,6 @@
 # Country Count Per Region
 
-To compile, run `sbt assembly`. To run, run `spark-submit --files countries.csv target/scala-2.11/CountryCount-assembly-1.0.jar`
+To compile, run `sbt assembly`. To run, run `spark-submit --files countries.csv target/scala-2.12/CountryCount-assembly-2.0.jar`
 
 ## Acknowledgements
 

@@ -1,6 +1,6 @@
 # Average Population Per Region
 
-To compile, run `sbt assembly`. To run, run `spark-submit --files countries.csv target/scala-2.11/AveragePopulation-assembly-1.0.jar countries.csv`
+To compile, run `sbt assembly`. To run, run `spark-submit --files countries.csv target/scala-2.12/AveragePopulation-assembly-2.0.jar countries.csv`
 
 ## Acknowledgements
 

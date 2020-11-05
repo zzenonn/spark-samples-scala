@@ -1,12 +1,12 @@
 name := "AmazonReviewsLda"
 
-version := "1.0"
+version := "2.0"
 
 organization := "edu.ateneo.nrg"
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.12.10"
 
-val sparkVersion = "2.4.1"
+val sparkVersion = "3.0.0"
 
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % sparkVersion % "provided",

@@ -50,7 +50,7 @@ object AmazonReviewsLda {
     
     // Creates a User defined function that will count the number of elements in an
     // array in a given column.
-    val countTokens = udf((words: Seq[String]) => words.size, IntegerType)
+    val countTokens = udf((words: Seq[String]) => words.size)
     
     // Converts string to lowercase, then splits by regex. Denotes matching pattern, not splitting gaps.
     val regexTokenizer = new RegexTokenizer()
@@ -116,7 +116,7 @@ object AmazonReviewsLda {
     val vocabulary = sc.broadcast(clusteringPipelineModel.stages(0).asInstanceOf[CountVectorizerModel].vocabulary)
 
     // Function that retrieves words from vocabulary based on vector indices.
-    val getWords = udf((vector : WrappedArray[Int]) => { vector.map( i => vocabulary.value(i)) }, ArrayType(StringType))
+    val getWords = udf((vector : WrappedArray[Int]) => { vector.map( i => vocabulary.value(i)) })
     
     // Get the top 20 words per topic
     val topics = clusteringPipelineModel.stages(2).asInstanceOf[LDAModel].describeTopics(20)

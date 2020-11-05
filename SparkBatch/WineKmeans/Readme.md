@@ -2,7 +2,7 @@
 
 This next application demonstrates the use of the Kmeans clustering algorithm using Spark along with some feature extraction on text data. After some minimal changes, this can even be run on a cluster.
 
-To compile, run `sbt assembly`. To run, run `spark-submit --files winemag-data-130k-v2.csv.gz target/scala-2.11/WineKmeans-assembly-1.0.jar`
+To compile, run `sbt assembly`. To run, run `spark-submit --files winemag-data-130k-v2.csv.gz target/scala-2.12/WineKmeans-assembly-2.0.jar`
 
 *Note: It is highly suggested that you use a virtual machine to run this application. As this requires very heavy processing, this may crash your computer.*
 
